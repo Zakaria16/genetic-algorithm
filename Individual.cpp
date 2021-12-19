@@ -4,9 +4,7 @@
 
 Individual::Individual()
 {
-	this->chromosome = "";
-	this->target = "";
-	this->fitness = calculateFitness();
+	Individual("","");
 }
 
 Individual::Individual(string chromosome, string target)

@@ -5,10 +5,10 @@
 using namespace std;
 
 
-GeneticAlgorithm::GeneticAlgorithm(string target, string genes,int populationSize) {
+GeneticAlgorithm::GeneticAlgorithm(string target, string genes,int population_size) {
 	this->target = target;
 	this->genes = genes;
-	this->N = populationSize;
+	this->population_size = population_size;
 	this->genes_size = genes.size();
 	this->target_size = target.size();
 	srand((unsigned)(time(0)));
@@ -19,8 +19,8 @@ GeneticAlgorithm::GeneticAlgorithm(string target, string genes,int populationSiz
 vector<Individual> GeneticAlgorithm::create_population()
 {
 	// create initial population
-	vector<Individual> population;
-	for (int i = 0; i < N; i++)
+	static vector<Individual> population;
+	for (int i = 0; i < population_size; i++)
 	{
 		string gnome = create_gnome();
 		population.push_back(Individual(gnome, target));
@@ -29,14 +29,14 @@ vector<Individual> GeneticAlgorithm::create_population()
 }
 
 
-Individual GeneticAlgorithm::optimize()
+Result<> GeneticAlgorithm::optimize()
 {
-
 	vector<Individual> population = create_population();
 	bool found = false;
 	int generation = 0;
-	//@todo add number of tries
-	while (!found)
+	clock_t begin_time = clock();
+	
+	while (!found && generation<iterations)
 	{
 		// sort the population in increasing order of fitness score
 		sort(population.begin(), population.end());
@@ -60,19 +60,19 @@ Individual GeneticAlgorithm::optimize()
 
 		// Perform Elitism, that mean 10% of fittest population
 		// goes to the next generation
-		int s = (int)(0.1 * N);
+		int s = (int)(0.1 * population_size);
 		for (int i = 0; i < s; i++)
 			new_generation.push_back(population[i]);
 
 		// From 90% of fittest population, Individuals
 		// will mate to produce offspring
-		s = (int)(0.9 * N);
+		s = (int)(0.9 * population_size);
 		for (int i = 0; i < s; i++)
 		{
 			int len = population.size();
-			int r = random_num(0, 50);
+			int r = random_num(0, (int)len/2);
 			Individual parent1 = population[r];
-			r = random_num(0, 50);
+			r = random_num(0, (int)len/2);
 			Individual parent2 = population[r];
 			Individual offspring = mate(parent1, parent2);
 			new_generation.push_back(offspring);
@@ -82,8 +82,9 @@ Individual GeneticAlgorithm::optimize()
 
 		generation++;
 	}
-
-	return population[0];
+	double time_spent = (double)((clock()- begin_time) / CLOCKS_PER_SEC);
+	Result<> res(generation, population[0], time_spent);
+	return res;
 }
 
 
@@ -96,7 +97,7 @@ Individual GeneticAlgorithm::mate(Individual p1, Individual p2)
 	for (int i = 0; i < len; i++)
 	{
 		// random probability
-		double prob = random_num(0, 100) / 100.0;
+		double prob = random_num(0, 100)/100.0;
 
 		// if prob is less than 0.45, insert gene
 		// from parent 1
@@ -118,6 +119,11 @@ Individual GeneticAlgorithm::mate(Individual p1, Individual p2)
 	// create new Individual(offspring) using 
 	// generated chromosome for offspring 
 	return Individual(child_chromosome, target);
+}
+
+void GeneticAlgorithm::set_iterations(int iterations)
+{
+	this->iterations = iterations;
 }
 
 

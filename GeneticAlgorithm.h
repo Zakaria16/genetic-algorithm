@@ -8,6 +8,7 @@
 #include <time.h>
 
 #include "Individual.h"
+#include "Result.h"
 
 using namespace std;
 
@@ -16,7 +17,8 @@ class GeneticAlgorithm
 private:
 	int target_size=0;
 	int genes_size = 0;
-	int N;
+	int population_size;
+	int iterations = 1000;
 	string target;
 	string genes;
 	string create_gnome();
@@ -26,8 +28,10 @@ public:
 	GeneticAlgorithm(string target, string genes,int populationSize);
 	//GeneticAlgorithm(string target, string genes);
 	vector<Individual> create_population();
-	Individual optimize();
+	Result<> optimize();
 	Individual mate(Individual parent1, Individual parent2);
-
+	void set_target(string target);
+	void set_genes(string genes);
+	void set_iterations(int iterations);
 
 };

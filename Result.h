@@ -1,5 +1,5 @@
 #pragma once
-#include "Individual.h";
+#include "Individual.h"
 template<class T = Individual>
 class Result
 {
