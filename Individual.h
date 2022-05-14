@@ -1,22 +1,25 @@
 #ifndef INDIVIDUAL_H
 #define INDIVIDUAL_H
 #include <iostream>
+#include <vector>
 
 /// Class representing individual in population
-template <typename T=std::string>
+template <typename T=int>
 class Individual {
 public:
     Individual();
 
-    Individual(T chromosome, T target);
+    Individual(std::vector<T> chromosome, std::vector<T> target);
 
-    T getChromosome();
+    std::vector<T> getChromosome();
 
-    void setChromosome(const T &chromosome);
+    void setChromosome(const std::vector<T> &chromosome);
 
     int getFitness() const;
 
-    int calculateFitness();
+    virtual int calculateFitness();
+    
+    virtual ~Individual()=default;
 
     /// Overloading < operator
 
@@ -36,8 +39,8 @@ public:
 
 private:
     // int random_num(int start, int end);
-    T mChromosome{};
-    T target{};
+    std::vector<T> mChromosome{};
+    std::vector<T> target{};
     int fitness{};
 
 };
@@ -47,7 +50,7 @@ Individual<T>::Individual()
 = default;
 
 template<typename T>
-Individual<T>::Individual(T chromosome, T target): mChromosome(chromosome), target(target), fitness(calculateFitness())
+Individual<T>::Individual(std::vector<T> chromosome, std::vector<T> target): mChromosome(chromosome), target(target), fitness(this->calculateFitness())
 {}
 
 /// Calculate fittness score, it is the number of
@@ -74,11 +77,11 @@ int Individual<T>::calculateFitness()
 // 	return random_int;
 // }
 template<typename T>
-T Individual<T>::getChromosome() {
+std::vector<T> Individual<T>::getChromosome() {
     return mChromosome;
 }
 template<typename T>
-void Individual<T>::setChromosome(const T &chromosome) {
+void Individual<T>::setChromosome(const std::vector<T> &chromosome) {
     this->mChromosome = chromosome;
 }
 template<typename T>

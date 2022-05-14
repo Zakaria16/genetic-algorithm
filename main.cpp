@@ -12,9 +12,11 @@ const string GENES = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 12345
 //const string GENES = "lvjhalkdsufiowhfoewiahfnchzfiodafjiodfjiodsfiosjfsonvh ifhdjklahfisd aihfsdjhsdkljhf dhfuheihcdjs";
 
 int main() {
+    std::vector<char> s(GENES.begin(),GENES.end());
+    std::vector<char> targ={'M','A','Z','I','T','E','K'};
     std::vector<int> hello = {1, 2, 4, 5, 6, 7, 8, 9, 0};
     std::vector<int> t = {9, 8, 7};
-    GeneticAlgorithm<std::vector<int>> ga(t, hello, 100);
+    GeneticAlgorithm<char> ga(targ, s, 100);
     ga.set_iterations(200);
     auto res = ga.optimize();
     auto idv = res.getSolution();

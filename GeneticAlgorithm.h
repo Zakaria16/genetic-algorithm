@@ -7,63 +7,63 @@
 #include <algorithm>
 #include <ctime>
 #include <sstream>
+#include <random>
 
 #include "Individual.h"
 #include "Result.h"
 
+
 template<typename T>
-class GeneticAlgorithm
-{
-private:
-	int target_size=0;
-	int genes_size = 0;
-	int population_size;
-	int iterations_ = 1000;
-	T target_;
-	T genes_;
-	T create_gnome();
-	static int random_num(int start, int end);
-	//long _population_size=100;
+class GeneticAlgorithm {
+
+
 public:
-	GeneticAlgorithm(const T& target, const T& genes,int populationSize);
-	//GeneticAlgorithm(string target, string genes);
-	std::vector<Individual<T>> create_population();
-	Result<T> optimize();
-	Individual<T> mate(Individual<T> parent1, Individual<T> parent2);
-	void set_target(const T& target) {
-       this->target_ =target;
+    GeneticAlgorithm(const std::vector<T> &target, const std::vector<T> &genes, int populationSize);
+
+    GeneticAlgorithm(const std::string &target, const std::string &genes, int populationSize);
+
+    std::vector<Individual<T>> create_population();
+
+    Result<T> optimize();
+
+    Individual<T> mate(Individual<T> parent1, Individual<T> parent2);
+
+    void set_target(const std::vector<T> &target) {
+        this->mTarget = target;
     }
 
-    void set_genes(const T& genes) {
-        this->genes_ = genes;
+    void set_genes(const std::vector<T> &genes) {
+        this->mGenes = genes;
     }
 
-    void set_iterations(int iterations){
-        this->iterations_ = iterations;
+    void set_iterations(int iterations) {
+        this->mIterations = iterations;
     }
+
+private:
+    int mPopulationSize;
+    int mIterations = 1000;
+    std::vector<T> mTarget;
+    std::vector<T> mGenes;
+
+    std::vector<T> createGnome();
+    static int randomNumber(int start, int end);
+
 
 };
 
 
-
 template<typename T>
-GeneticAlgorithm<T>::GeneticAlgorithm(const T &target, const T &genes, int population_size):population_size(population_size) {
-    this->target_ = target;
-    this->genes_ = genes;
-
-    this->genes_size = genes.size();
-    this->target_size = target.size();
-    //todo replace
-    std::srand((unsigned) (time(0)));
-}
+GeneticAlgorithm<T>::GeneticAlgorithm(const std::vector<T> &target, const std::vector<T> &genes, int populationSize)
+        :mTarget(target), mGenes(genes), mPopulationSize(populationSize){}
 
 template<typename T>
 std::vector<Individual<T>> GeneticAlgorithm<T>::create_population() {
     // create initial population
     static std::vector<Individual<T>> population;
-    for (int i = 0; i < population_size; i++) {
-        T gnome = create_gnome();
-        population.emplace_back(gnome, target_);
+    for (int i = 0; i < mPopulationSize; i++) {
+        std::vector<T> gnome = createGnome();
+        population.emplace_back(gnome, mTarget);
     }
     return population;
 }
@@ -74,7 +74,7 @@ Result<T> GeneticAlgorithm<T>::optimize() {
     int generation = 0;
     clock_t begin_time = clock();
     Individual<T> bestIndividual = population[0];
-    while (generation < iterations_) {
+    while (generation < mIterations) {
         // sort the population in increasing order of fitness score
         sort(population.begin(), population.end());
 
@@ -85,8 +85,8 @@ Result<T> GeneticAlgorithm<T>::optimize() {
         for(const auto &d:bestIndividual.getChromosome() ) {
             ss <<d<<",";
         }
-        ss<<"}\n";
-        std::cout<<ss.str();
+        ss << "}\t";
+        std::cout << ss.str();
         std::cout << "Fitness: " << bestIndividual.getFitness() << "\n";
 
         // if the individual having lowest fitness score ie.
@@ -101,19 +101,19 @@ Result<T> GeneticAlgorithm<T>::optimize() {
 
         // Perform Elitism, that mean 10% of fittest population
         // goes to the next generation
-        int s = (int) (0.1 * population_size);
+        int s = (int) (0.1 * mPopulationSize);
         new_generation.reserve(s);
         for (int i = 0; i < s; i++)
             new_generation.push_back(population[i]);
 
         // From 90% of fittest population, Individuals
         // will mate to produce offspring
-        s = (int) (0.9 * population_size);
+        s = (int) (0.9 * mPopulationSize);
         for (int i = 0; i < s; i++) {
             int len = population.size();
-            int r = random_num(0, (int) len / 2);
+            int r = randomNumber(0, (int) len / 2);
             Individual<T> parent1 = population[r];
-            r = random_num(0, (int) len / 2);
+            r = randomNumber(0, (int) len / 2);
             Individual<T> parent2 = population[r];
             Individual<T> offspring = mate(parent1, parent2);
             new_generation.push_back(offspring);
@@ -122,8 +122,8 @@ Result<T> GeneticAlgorithm<T>::optimize() {
         bestIndividual  = population[0];
         generation++;
     }
-
-    auto time_spent =  (double )((clock() - begin_time) / CLOCKS_PER_SEC);
+    /// @todo 13/05/2022 use duration
+    auto time_spent =  (int )((clock() - begin_time) / CLOCKS_PER_SEC);
 
     auto ind = population[0];
     Result<T>  res(generation,ind, time_spent);
@@ -133,13 +133,13 @@ Result<T> GeneticAlgorithm<T>::optimize() {
 template<typename T>
 Individual<T> GeneticAlgorithm<T>::mate(Individual<T> parent1, Individual<T> parent2) {
     // chromosome for offspring
-    T child_chromosome;
+    std::vector<T> child_chromosome;
 
     int len = parent1.getChromosome().size();
     child_chromosome.reserve(len);
     for (int i = 0; i < len; i++) {
         // random probability
-        double prob = random_num(0, 100) / 100.0;std::string hj;
+        double prob = randomNumber(0, 100) / 100.0;std::string hj;
 
         // if prob is less than 0.45, insert gene
         // from parent 1
@@ -158,22 +158,22 @@ Individual<T> GeneticAlgorithm<T>::mate(Individual<T> parent1, Individual<T> par
             // otherwise insert random gene(mutate),
             // for maintaining diversity
         else {
-            child_chromosome.push_back(genes_[random_num(0, genes_size - 1)]);
+            child_chromosome.push_back(mGenes[randomNumber(0, mGenes.size() - 1)]);
         }
     }
     // create new Individual<T>(offspring) using
     // generated chromosome for offspring
-    return Individual<T>(child_chromosome, target_);
+    return Individual<T>(child_chromosome, mTarget);
 }
 
 
 template<typename T>
-T GeneticAlgorithm<T>::create_gnome() {
+std::vector<T> GeneticAlgorithm<T>::createGnome() {
     // create chromosome or string of genes
-    T gnome;
-    for (int i = 0; i < target_size; i++) {
+    std::vector<T> gnome;
+    for (int i = 0; i < mTarget.size(); i++) {
         //mutated gene
-        gnome.push_back(genes_[random_num(0, genes_size - 1)]);
+        gnome.push_back(mGenes[randomNumber(0, mGenes.size() - 1)]);
     }
     return gnome;
 }
@@ -185,8 +185,16 @@ T GeneticAlgorithm<T>::create_gnome() {
 /// \param end range end
 /// \return int
 template<typename T>
-int GeneticAlgorithm<T>::random_num(int start, int end) {
-    int range = (end - start) + 1;
-    int random_int = start + (std::rand() % range);
-    return random_int;
+int GeneticAlgorithm<T>::randomNumber(int start, int end) {
+    static std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_real_distribution<double> dist(start, end);
+    return dist(mt);
+}
+
+template<>
+GeneticAlgorithm<char>::GeneticAlgorithm(const std::string &target, const std::string &genes, int populationSize)
+        :mPopulationSize(populationSize) {
+            mTarget=std::vector<char>(target.begin(),target.end());
+            mGenes=std::vector<char>(genes.begin(),genes.end());
 }
