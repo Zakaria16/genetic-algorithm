@@ -1,14 +1,9 @@
-// genetic_algorithm.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include <iostream>
 #include "Individual.h"
 #include "GeneticAlgorithm.h"
 #include "Result.h"
 
-using namespace std;
-
-const string GENES = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890, .-;:_!\"#%&/()=?@${[]}";
+const std::string GENES = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890, .-;:_!\"#%&/()=?@${[]}";
 //const string GENES = "lvjhalkdsufiowhfoewiahfnchzfiodafjiodfjiodsfiosjfsonvh ifhdjklahfisd aihfsdjhsdkljhf dhfuheihcdjs";
 
 int main() {
@@ -17,12 +12,17 @@ int main() {
     std::vector<int> hello = {1, 2, 4, 5, 6, 7, 8, 9, 0};
     std::vector<int> t = {9, 8, 7};
     GeneticAlgorithm<char> ga(targ, s, 100);
-    ga.set_iterations(200);
+    ga.setIterations(200);
+  //  ga.enableDebug(true);
     auto res = ga.optimize();
     auto idv = res.getSolution();
+    std::cout<<"chromosome: [";
+    for (const auto &i:idv.getChromosome()) {
+         std::cout<<i<<",";
+    }
+    std::cout<<"]\t";
 
-    cout << "Iteration: " << res.getGeneration() << "\t";
-    //cout<< "String: "<< idv.getChromosome()<<"\t";
-    cout << "Fitness: " << idv.getFitness() << "\t";
-    cout << "Time: " << res.getDuration() << "s" << "\n";
+    std::cout << "Iteration: " << res.getGeneration() << "\t";
+    std::cout << "Fitness: " << idv.getFitness() << "\t";
+    std::cout << "Time: " << res.getDuration() << "s" << "\n";
 }

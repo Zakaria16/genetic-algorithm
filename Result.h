@@ -8,11 +8,11 @@ class Result {
 public:
     Result(int generation, const Individual<T> &solution, double duration);
 
-    Individual<T> getSolution();
+    auto getSolution();
 
-    int getGeneration();
+    auto getGeneration();
 
-    int getDuration();
+    auto getDuration();
 
 private:
     Individual<T> solution;
@@ -22,7 +22,7 @@ private:
 
 
 template<typename T>
-Individual<T> Result<T>::getSolution() {
+auto Result<T>::getSolution() {
     return this->solution;
 }
 
@@ -34,12 +34,12 @@ duration(duration) {
 
 
 template<typename T>
-inline int Result<T>::getGeneration() {
+inline auto Result<T>::getGeneration() {
     return this->generation;
 }
 
 template<typename T>
-inline int Result<T>::getDuration() {
+inline auto Result<T>::getDuration() {
     return this->duration;
 }
 
