@@ -1,6 +1,6 @@
 # Genetic Algorithm
 A Genetic algorithm implemented in cpp
-
+>Currently a header only library
 ## Build
 
 ```shell

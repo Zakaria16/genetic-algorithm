@@ -3,10 +3,11 @@ project(genetic_algorithm)
 SET(CMAKE_CXX_STANDARD 20)
 
 include_directories(
-    ${CMAKE_SOURCE_DIR}
+        ${CMAKE_SOURCE_DIR}/include
+        ${CMAKE_SOURCE_DIR}/src
 )
 
-add_library(genetic_algorithm GeneticAlgorithm.cpp)
+add_library(genetic_algorithm src/GeneticAlgorithm.cpp)
 
 add_executable(main main.cpp)
 target_link_libraries(main genetic_algorithm)
