@@ -6,7 +6,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}
 )
 
-add_library(genetic_algorithm GeneticAlgorithm.cpp Individual.cpp)
+add_library(genetic_algorithm GeneticAlgorithm.cpp)
 
 add_executable(main main.cpp)
 target_link_libraries(main genetic_algorithm)
