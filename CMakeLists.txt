@@ -35,6 +35,10 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/include DESTINATION "${CMAKE_INSTALL_INCLU
 configure_file(libgenetic_algorithm.pc.in libgenetic_algorithm.pc @ONLY)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libgenetic_algorithm.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 
-
+#add test if gtest is available
+find_package(GTest)
+if (GTest_FOUND)
+    add_subdirectory(test)
+endif ()
 
 

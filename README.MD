@@ -9,6 +9,7 @@ cd build
 cmake ..
 make 
 ```
+if you have googletest files in a different directory use `cmake .. -DGTEST_ROOT=<path_to_gtest>`
 
 To install `make install`
 
